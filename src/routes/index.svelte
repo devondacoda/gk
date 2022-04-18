@@ -40,24 +40,33 @@
     }
   });
 
+  const sortTypes = [
+    { label: 'Recently Created', value: 'mostRecentlyCreated' },
+    { label: 'Closest Target Date', value: 'targetDate' },
+    { label: 'Percentage Completed', value: 'percentageCompleted' },
+    { label: 'Urgent', value: 'urgent' },
+  ]
+
   function handleSortSelection(value: string) {
     lastSortSelection = value;
     const sortFunctions = {
       mostRecentlyCreated: () => {
-        existingGoals = existingGoals.slice().sort((a, b) => {
-          return a.id < b.id ? -1 : 1;
-        })
+        existingGoals = existingGoals.slice().sort((a, b) => a.id < b.id ? -1 : 1)
       },
       targetDate: () => {
-        existingGoals = existingGoals.slice().sort((a, b) => {
-          return a.targetDate > b.targetDate ? -1 : 1;
-        })
+        existingGoals = existingGoals.slice().sort((a, b) => a.targetDate > b.targetDate ? -1 : 1)
       },
       percentageCompleted: () => {
         existingGoals = existingGoals.slice().sort((a, b) => {
           const aPercent = a.hoursComplete / a.estimatedHours;
           const bPercent = b.hoursComplete / b.estimatedHours;
           return (aPercent + +(a.done)) < (bPercent + +(b.done)) ? -1 : 1;
+        })
+      },
+      urgent: () => {
+        existingGoals = existingGoals.slice().sort((a, b) => {
+          console.log(a.urgent, b.urgent, a.urgent > b.urgent)
+          return (+(a.urgent || 0)) < (+(b.urgent || 0)) ? -1 : 1;
         })
       }
     }
@@ -68,7 +77,7 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
+  <title>Goal Keeper</title>
 </svelte:head>
 
 <div class="h-full lg:w-5/6">
@@ -116,9 +125,9 @@
     {:else}
       <div>Sort By...</div>
       <select name="" on:change={(e) => handleSortSelection(e.target['value'])}>
-        <option value="mostRecentlyCreated">Recently Created</option>
-        <option value="targetDate">Closest Target Date</option>
-        <option value="percentageCompleted">Percentage Completed</option>
+        {#each sortTypes as {value, label}}
+          <option {value}>{label}</option>
+        {/each}
       </select>
       {#each existingGoals.slice().reverse() as goal (goal.id)}
         <div

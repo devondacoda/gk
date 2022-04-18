@@ -7,12 +7,17 @@
 
 @layer components {
   .app-input {
+    @apply mb-2;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
   }
   .app-input > label {
     @apply text-sm;
+  }
+  .app-input label[required]::after {
+    content: '*';
+    color: red;
   }
   .app-border {
     @apply border-2 border-slate-700;
@@ -49,8 +54,8 @@
     border-top: 1px solid rgba(178, 178, 178, 0.8);
     padding-top: 0.4rem;
   }
-  .hover-state * {
-    filter: brightness(102%);
+  .hover-state {
+    filter: brightness(105%);
     color: black;
     font-weight: 600;
   }

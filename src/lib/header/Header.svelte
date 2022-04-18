@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/stores';
 </script>
 
 <header>
@@ -21,9 +20,6 @@
     justify-content: space-between;
     padding: 1rem;
     position: fixed;
-  }
-
-  h1 {
   }
 
   .corner {

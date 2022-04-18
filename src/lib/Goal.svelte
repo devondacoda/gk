@@ -10,6 +10,7 @@
     estimatedHours: number;
     hide?: boolean;
     hoursComplete?: number;
+    urgent?: boolean
   };
 </script>
 
@@ -37,7 +38,8 @@
     createdAt: today,
     uid: 'test_1',
     id: -1,
-    hoursComplete: 0
+    hoursComplete: 0,
+    urgent: false
   };
 
   let newGoal: GoalType = { ...emptyState };
@@ -96,7 +98,8 @@
     <Note />
   {/if} -->
   <div
-    class="card"
+    class="card min-w-min"
+    class:urgent={newGoal?.urgent || goal?.urgent}
     class:done={goal?.done}
     class:app-border={viewId === goal?.id}
     class:shadow-none={viewId === goal?.id}
@@ -106,6 +109,11 @@
       <div class="card-header max-w-sm truncate" class:w-40={isSummary}>
         <span class="float-left mr-2">#{goal.id}</span>
         {goal.objective}
+        {#if goal?.urgent}
+          <span class:circle={isSummary} class="urgent-tag bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+            {isSummary ? '' : 'URGENT'}
+          </span>
+        {/if}
       </div>
       <div class="card-body">
         {#if isSummary}
@@ -131,7 +139,7 @@
           <section class="goal-updates">
             <div class="flex items-center">
               <button
-                class="toggle mr-2 app-border"
+                class="circle toggle-done mr-2 app-border"
                 aria-label="Mark as done"
                 on:click={() => {
                   goal.done = !goal.done;
@@ -139,7 +147,6 @@
                   saveGoal(goal);
                   if (goal.done && confetti) {
                     confetti({
-                      drift: -Math.random() * 2,
                       origin: {
                         x: 0.45
                       }
@@ -164,11 +171,16 @@
       </div>
     {:else}
       <!-- new goal -->
-      <div class="card-header">New Goal</div>
+      <div class="card-header">
+        New Goal
+        {#if newGoal?.urgent || goal?.urgent}
+          <span class="urgent-tag bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900">URGENT</span>
+        {/if}
+      </div>
       <div class="card-body">
         <form on:submit|preventDefault={handleCreate}>
           <div class="app-input">
-            <label for="objective">Objective</label>
+            <label required for="objective">Objective</label>
             <input
               name="objective"
               autocomplete="off"
@@ -179,7 +191,7 @@
             />
           </div>
           <div class="app-input">
-            <label for="estimatedHours">Estimated Total Hours Needed</label>
+            <label required for="estimatedHours">Estimated Total Hours Needed</label>
             <input
               type="number"
               min="1"
@@ -190,7 +202,7 @@
             />
           </div>
           <div class="app-input">
-            <label for="targetDate">Target Date</label>
+            <label required for="targetDate">Target Date</label>
             <input
               type="date"
               name="targetDate"
@@ -211,6 +223,19 @@
               bind:value={newGoal.motivation}
             />
           </div>
+
+          <div class="flex items-center mb-4">
+            <button
+              type="button"
+              class="circle toggle-urgent mr-2 app-border"
+              aria-label="Mark as urgent"
+              on:click={() => {
+                newGoal.urgent = !newGoal.urgent;
+              }}
+            />
+            <p>Mark as urgent</p>
+          </div>
+
           <button class="btn w-full"> Add Goal </button>
         </form>
       </div>
@@ -223,8 +248,9 @@
     background-color: var(--accent-color);
     height: 100%;
     color: var(--text-color);
+    position: relative;
   }
-  button.toggle {
+  .circle {
     width: 2em;
     height: 2em;
     background-color: white;
@@ -234,13 +260,20 @@
     box-sizing: border-box;
     background-size: 1em auto;
   }
+  .urgent-tag {
+    position: absolute;
+    margin: -1.8rem -0.5rem;
+    border: 2px solid;
+    left: 0;
+    background: var(--warning-color);
+  }
   .done {
     background-color: var(--primary-color);
   }
-  .done *:not(input) {
+  .done *:not(input, .urgent-tag) {
     color: white !important;
   }
-  .done .toggle {
+  .done .toggle-done, .urgent .toggle-urgent {
     background-image: url("data:image/svg+xml,%3Csvg width='22' height='16' viewBox='0 0 22 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.5 1.5L7.4375 14.5L1.5 8.5909' stroke='%23676778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
   .goal-updates {
