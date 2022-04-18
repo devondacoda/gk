@@ -133,7 +133,7 @@
               placeholder="Enter Hours Complete"
               bind:value={goal.hoursComplete}
               required
-              on:change={() => debounceSave()}
+              on:input={() => debounceSave()}
             /> / {goal.estimatedHours}
           </form>
           <section class="goal-updates">
