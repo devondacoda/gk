@@ -1,0 +1,33 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+</script>
+
+<header>
+	<h1>Goal Keeper </h1>
+	<div class="corner">
+
+	</div>
+
+
+	<div class="corner">
+		<!-- TODO put something else here? github link? -->
+		
+	</div>
+</header>
+
+<style>
+	header {
+		display: flex;
+		justify-content: space-between;
+		padding: 1rem;
+		position: fixed;
+	}
+
+	h1 {
+	}
+
+	.corner {
+		width: 3em;
+		height: 3em;
+	}
+</style>
