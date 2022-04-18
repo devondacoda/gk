@@ -93,7 +93,7 @@
   }
 </script>
 
-<div class="flex">
+<div class="flex justify-center">
   <!-- {#if goal && !isSummary}
     <Note />
   {/if} -->

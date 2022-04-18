@@ -80,8 +80,8 @@
   <title>Goal Keeper</title>
 </svelte:head>
 
-<div class="h-full lg:w-5/6">
-  <section class="w-full lg:flex lg:justify-center">
+<div class="h-full xl:w-5/6">
+  <section class="w-full xl:flex xl:justify-center">
     <!-- main screen -->
     <div class="flex items-center">
       <div class="w-full">
@@ -103,7 +103,7 @@
     </div>
   </section>
 
-  <section class="w-full flex justify-center">
+  <section class="xl:w-5/6 xl:flex m-auto justify-center">
     <span class="px-2">
       <Status goal={goalSelected} type="currentStatus" />
     </span>
@@ -116,35 +116,39 @@
   </section>
 
   <!-- existing goals -->
-  <div class="px-4 lg:w-1.5/6 scrollable h-full md:flex lg:block lg:fixed top-0 right-0 py-16 max-w-xs bg-opacity-5 bg-zinc-600">
+  <div class="px-4 xl:w-1.5/6 xl:scrollable h-full xl:fixed xl:mx-0 top-0 right-0 py-16 bg-opacity-5 bg-zinc-600">
     <div class="text-center font-bold break-words">
       Goals
     </div>
     {#if !existingGoals?.length}
       Your goals will show up here as you add them
     {:else}
+    <div class="text-center">
       <div>Sort By...</div>
       <select name="" on:change={(e) => handleSortSelection(e.target['value'])}>
         {#each sortTypes as {value, label}}
           <option {value}>{label}</option>
         {/each}
       </select>
-      {#each existingGoals.slice().reverse() as goal (goal.id)}
-        <div
-          class="mb-3 cursor-pointer flex items-center justify-center hover:hover-state"
-          on:click={() => {
-            selectedId = null
-            setTimeout(() => {
-              selectedId = goal.id
-            }, 1)
-          }}
-          in:receive={{ key: goal.id }}
-          out:send={{ key: goal.id }}
-          animate:flip="{{duration: 450}}"
-        >
-          <Goal bind:goal isSummary={true} viewId={selectedId} />
-        </div>
-      {/each}
+    </div>
+      <div class="scrollable flex pt-4 xl:overflow-hidden xl:block">
+        {#each existingGoals.slice().reverse() as goal (goal.id)}
+          <div
+            class="mb-3 cursor-pointer flex items-center justify-center hover:hover-state px-4"
+            on:click={() => {
+              selectedId = null
+              setTimeout(() => {
+                selectedId = goal.id
+              }, 1)
+            }}
+            in:receive={{ key: goal.id }}
+            out:send={{ key: goal.id }}
+            animate:flip="{{duration: 450}}"
+          >
+            <Goal bind:goal isSummary={true} viewId={selectedId} />
+          </div>
+        {/each}
+      </div>
     {/if}
   </div>
 </div>
