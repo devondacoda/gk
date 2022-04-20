@@ -83,83 +83,83 @@
 </svelte:head>
 
 <div class="h-full xl:w-4/6 m-auto">
-  <section class="w-full xl:flex xl:justify-center">
-    <!-- main screen -->
-    <div class="flex items-center">
-      <div class="w-full">
-        {#if goalSelected}
-          <div>
-            <Goal bind:goal={goalSelected} on:goalAdded={getExistingGoals} />
-          </div>
-          <button
-            class="btn mt-12 w-full"
-            on:click={() => {
-              selectedId = null;
-            }}
-          >
-            Add Another Goal
-          </button>
-        {:else}
-          <div>
-            <Goal on:goalAdded={getExistingGoals} />
-          </div>
-        {/if}
-      </div>
-    </div>
-  </section>
+	<section class="w-full xl:flex xl:justify-center">
+		<!-- main screen -->
+		<div class="flex items-center">
+			<div class="w-full">
+				{#if goalSelected}
+					<div>
+						<Goal bind:goal={goalSelected} on:goalAdded={getExistingGoals} />
+					</div>
+					<button
+						class="btn mt-12 w-full"
+						on:click={() => {
+							selectedId = null;
+						}}
+					>
+						Add Another Goal
+					</button>
+				{:else}
+					<div>
+						<Goal on:goalAdded={getExistingGoals} />
+					</div>
+				{/if}
+			</div>
+		</div>
+	</section>
 
-  <section class="xl:w-5/6 xl:flex m-auto justify-center">
-    <span class="px-2">
-      <Status goal={goalSelected} type="currentStatus" />
-    </span>
-    <span class="px-2">
-      <Status goal={goalSelected} type="timeTilTarget" />
-    </span>
-    <span class="px-2">
-      <Status goal={goalSelected} type="motivation" />
-    </span>
-  </section>
+	<section class="xl:w-5/6 xl:flex m-auto justify-center">
+		<span class="px-2">
+			<Status goal={goalSelected} type="currentStatus" />
+		</span>
+		<span class="px-2">
+			<Status goal={goalSelected} type="timeTilTarget" />
+		</span>
+		<span class="px-2">
+			<Status goal={goalSelected} type="motivation" />
+		</span>
+	</section>
 </div>
 
 <!-- existing goals -->
 <div
-  class="px-4 xl:w-1.5/6 xl:scrollable h-full xl:fixed xl:mx-0 top-0 right-0 py-16 bg-opacity-5 bg-zinc-600"
+	class="px-4 xl:w-1.5/6 xl:scrollable h-full xl:fixed xl:mx-0 top-0 right-0 py-16 bg-opacity-5 bg-zinc-600"
 >
-  <div class="text-center font-bold">Goals</div>
-  {#if !existingGoals?.length}
-    Your goals will show up here as you add them
-  {:else}
-    <div class="text-center">
-      <div>Sort By...</div>
-      <select name="" on:change={(e) => handleSortSelection(e.target['value'])}>
-        {#each sortTypes as { value, label }}
-          <option {value}>{label}</option>
-        {/each}
-      </select>
-    </div>
-    <div class="scrollable flex pt-4 pb-12 xl:overflow-hidden xl:block">
-      {#each existingGoals.slice().reverse() as goal (goal.id)}
-        <div
-          class="mb-3 cursor-pointer flex items-center justify-center hover:hover-state px-4"
-          on:click={() => {
-            selectedId = goal.id + '';
-            setTimeout(() => {
-              selectedId = goal.id;
-            });
-            window.scrollTo({
-              top: 0,
-              left: 0
-            });
-          }}
-          in:receive={{ key: goal.id }}
-          out:send={{ key: goal.id }}
-          animate:flip={{ duration: 450 }}
-        >
-          <Goal bind:goal isSummary={true} viewId={selectedId} />
-        </div>
-      {/each}
-    </div>
-  {/if}
+	<div class="text-center font-bold">Goals</div>
+	{#if !existingGoals?.length}
+		Your goals will show up here as you add them
+	{:else}
+		<div class="text-center">
+			<div>Sort By...</div>
+			<select name="" on:change={(e) => handleSortSelection(e.target['value'])}>
+				{#each sortTypes as { value, label }}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		</div>
+		<div class="scrollable flex pt-4 pb-12 xl:overflow-hidden xl:block">
+			{#each existingGoals.slice().reverse() as goal (goal.id)}
+				<div
+					class="mb-3 cursor-pointer flex items-center justify-center hover:hover-state px-4"
+					on:click={() => {
+						selectedId = goal.id + '';
+						setTimeout(() => {
+							selectedId = goal.id;
+						});
+						window.scrollTo({
+							top: 0,
+							left: 0
+						});
+					}}
+					in:receive={{ key: goal.id }}
+					out:send={{ key: goal.id }}
+					animate:flip={{ duration: 450 }}
+				>
+					<Goal bind:goal isSummary={true} viewId={selectedId} />
+				</div>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>

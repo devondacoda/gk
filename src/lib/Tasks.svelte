@@ -9,6 +9,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { GoalType } from './Goal.svelte';
+	import Timer from './Timer.svelte';
 	export let goal: GoalType = null;
 
 	const emptyTaskState: TaskType = {
@@ -30,7 +31,11 @@
 	}
 </script>
 
-<div class="card px-6 bg-emerald-600 bg-opacity-80">
+<div class="pb-3">
+	<Timer />
+</div>
+
+<div class="card px-6 bg-opacity-5 bg-zinc-600">
 	<div class="text-center font-bold">Tasks</div>
 	<div class="text-center py-4">
 		<form on:submit|preventDefault={insertTask} class="app-input">
@@ -39,40 +44,40 @@
 				type="text"
 				autocomplete="off"
 				placeholder="Enter Task for Goal"
-        required
+				required
 				bind:value={newTask.description}
 			/>
-      <button class="btn">Add Task</button>
+			<button class="btn">Add Task</button>
 		</form>
 	</div>
 
 	{#if goal && goal.tasks}
-    <div class="scrollable tasks-list -mx-6">
-      <div class="px-6">
-        {#each goal.tasks.slice().reverse() || [] as task (goal.id + '.' + task.id)}
-          <div class="card mb-8 shadow-md" class:done={task.done}>
-            <div class="card-header">
-              <div class="mr-2">#{goal.id}.{task.id}</div>
-            </div>
-            <div class="card-body">
-              <div class="flex items-center">
-                <span>
-                  <button
-                    class="circle toggle-done mr-2 app-border"
-                    aria-label="Mark as done"
-                    on:click={() => {
-                      task.done = !task.done;
-                      dispatch('taskToggled', task);
-                    }}
-                  />
-                </span>
-                <p>{task.description}</p>
-              </div>
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
+		<div class="scrollable tasks-list -mx-6">
+			<div class="px-6">
+				{#each goal.tasks.slice().reverse() || [] as task (goal.id + '.' + task.id)}
+					<div class="card mb-8 shadow-md" class:done={task.done}>
+						<div class="card-header">
+							<div class="mr-2">#{goal.id}.{task.id}</div>
+						</div>
+						<div class="card-body">
+							<div class="flex items-center">
+								<span>
+									<button
+										class="circle toggle-done mr-2 app-border"
+										aria-label="Mark as done"
+										on:click={() => {
+											task.done = !task.done;
+											dispatch('taskToggled', task);
+										}}
+									/>
+								</span>
+								<p>{task.description}</p>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
 	{/if}
 </div>
 
