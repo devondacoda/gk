@@ -97,7 +97,7 @@
   --background-without-opacity: #FAF5E4;
   --column-width: 42rem;
   --column-margin-top: 4rem;
-  --success-color: #5ef091;
+  --success-color: #059669;
   --warning-color: #f0a35e;
 }
 
@@ -161,6 +161,33 @@ button {
 
 button:focus:not(:focus-visible) {
   outline: none;
+}
+
+.circle {
+  width: 2em;
+  height: 2em;
+  background-color: white;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background-size: 1em auto;
+}
+.urgent-tag {
+  position: absolute;
+  margin: -1.8rem -0.5rem;
+  border: 2px solid;
+  left: 0;
+  background: var(--warning-color);
+}
+.card.done {
+  background-color: var(--primary-color);
+}
+.done *:not(input, .urgent-tag) {
+  color: white !important;
+}
+.done .toggle-done, .urgent .toggle-urgent {
+  background-image: url("data:image/svg+xml,%3Csvg width='22' height='16' viewBox='0 0 22 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.5 1.5L7.4375 14.5L1.5 8.5909' stroke='%23676778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 @media (min-width: 720px) {

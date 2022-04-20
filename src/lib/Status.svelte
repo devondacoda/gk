@@ -14,11 +14,9 @@
 
   $: {
     if (goal) {
-      const currDate = new Date();
-      const targetDate = new Date(goal.targetDate);
-      currDate.setUTCHours(0, 0, 0, 0);
-      targetDate.setUTCHours(24, 0, 0, 0);
-      const msLeft = targetDate.getTime() - currDate.getTime();
+      const currDate = Date.parse(new Date().toLocaleDateString('en-ca'));
+      const targetDate = Date.parse(new Date(goal.targetDate.replace(/-/g, '/')).toLocaleDateString('en-ca'));
+      const msLeft = targetDate - currDate;
       daysLeft = Math.ceil(msLeft / (1000*60*60*24));
       remainingHours = (goal.estimatedHours - goal.hoursComplete);
       daysNeeded = remainingHours / hoursPerDay;
@@ -84,8 +82,10 @@
   }
   .overdue {
     border: 2px solid var(--warning-color);
+    background-color:  var(--warning-color);
   }
   .done {
     border: 2px solid var(--success-color);
+    background-color: var(--success-color);
   }
 </style>

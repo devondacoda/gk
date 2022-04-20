@@ -5,12 +5,13 @@
     createdAt: Date;
     objective: string;
     done: boolean;
-    targetDate: Date | string;
+    targetDate: string;
     motivation: string;
     estimatedHours: number;
     hide?: boolean;
     hoursComplete?: number;
-    urgent?: boolean
+    urgent?: boolean;
+    tasks: TaskType[];
   };
 </script>
 
@@ -19,7 +20,10 @@
   import { onMount } from 'svelte';
   // import Note from '../lib/Note.svelte';
   import { tweened } from 'svelte/motion';
-  import { cubicOut } from 'svelte/easing';
+  import { cubicOut, quintOut } from 'svelte/easing';
+import type { TaskType } from './Tasks.svelte';
+import Tasks from './Tasks.svelte';
+import { crossfade } from 'svelte/transition';
 
   export let goal: GoalType = null;
   export let isSummary: boolean = false;
@@ -39,7 +43,8 @@
     uid: 'test_1',
     id: -1,
     hoursComplete: 0,
-    urgent: false
+    urgent: false,
+    tasks: []
   };
 
   let newGoal: GoalType = { ...emptyState };
@@ -91,13 +96,35 @@
       };
     }, 750);
   }
+
+  const [send, receive] = crossfade({
+		duration: (d) => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 500,
+				easing: quintOut,
+				css: (t) => `
+          transform: ${transform} scale(${t});
+          opacity: ${t}
+        `
+			};
+		}
+	});
 </script>
 
-<div class="flex justify-center">
-  <!-- {#if goal && !isSummary}
-    <Note />
-  {/if} -->
+<div class="xl:flex justify-center">
+  {#if goal && !isSummary}
+    <div class="px-4 xl:w-1/6 absolute left-0">
+      <Tasks bind:goal on:taskAdded={() => saveGoal(goal)} on:taskToggled={() => saveGoal(goal)} />
+    </div>
+  {/if}
+
   <div
+    in:receive={{ key: (goal || newGoal).id }}
     class="card min-w-min"
     class:urgent={newGoal?.urgent || goal?.urgent}
     class:done={goal?.done}
@@ -118,7 +145,7 @@
       <div class="card-body">
         {#if isSummary}
           <p class="text-center">
-            {Math.floor((goal.hoursComplete / goal.estimatedHours) * 100)}% Progress
+            {Math.floor((goal.hoursComplete / goal.estimatedHours) * 100)}% Time Spent
           </p>
           <progress value={$progress}></progress>
         {:else}
@@ -138,22 +165,24 @@
           </form>
           <section class="goal-updates">
             <div class="flex items-center">
-              <button
-                class="circle toggle-done mr-2 app-border"
-                aria-label="Mark as done"
-                on:click={() => {
-                  goal.done = !goal.done;
-                  goal = goal;
-                  saveGoal(goal);
-                  if (goal.done && confetti) {
-                    confetti({
-                      origin: {
-                        x: 0.45
-                      }
-                    });
-                  }
-                }}
-              />
+              <span>
+                <button
+                  class="circle toggle-done mr-2 app-border"
+                  aria-label="Mark as done"
+                  on:click={() => {
+                    goal.done = !goal.done;
+                    goal = goal;
+                    saveGoal(goal);
+                    if (goal.done && confetti) {
+                      confetti({
+                        origin: {
+                          x: 0.45
+                        }
+                      });
+                    }
+                  }}
+                />
+              </span>
               <p>Mark as done</p>
             </div>
           </section>
@@ -178,7 +207,7 @@
         {/if}
       </div>
       <div class="card-body">
-        <form on:submit|preventDefault={handleCreate}>
+        <form id="newGoal" on:submit|preventDefault={handleCreate}>
           <div class="app-input">
             <label required for="objective">Objective</label>
             <input
@@ -206,7 +235,7 @@
             <input
               type="date"
               name="targetDate"
-              min={today.toISOString().split('T')[0]}
+              min={today.toLocaleDateString('en-ca')}
               placeholder="Target Date"
               required
               bind:value={newGoal.targetDate}
@@ -224,20 +253,24 @@
             />
           </div>
 
-          <div class="flex items-center mb-4">
-            <button
-              type="button"
-              class="circle toggle-urgent mr-2 app-border"
-              aria-label="Mark as urgent"
-              on:click={() => {
-                newGoal.urgent = !newGoal.urgent;
-              }}
-            />
+          <div class="flex items-center mb-4 app-input">
+            <span>
+              <button
+                type="button"
+                class="circle toggle-urgent mr-2 app-border"
+                aria-label="Mark as urgent"
+                on:click={() => {
+                  newGoal.urgent = !newGoal.urgent;
+                }}
+              />
+            </span>
             <p>Mark as urgent</p>
           </div>
 
-          <button class="btn w-full"> Add Goal </button>
         </form>
+      </div>
+      <div class="card-footer">
+        <button class="btn w-full" form="newGoal" type="submit"> Add Goal </button>
       </div>
     {/if}
   </div>
@@ -245,36 +278,8 @@
 
 <style>
   .card {
-    background-color: var(--accent-color);
     height: 100%;
-    color: var(--text-color);
     position: relative;
-  }
-  .circle {
-    width: 2em;
-    height: 2em;
-    background-color: white;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    border-radius: 50%;
-    box-sizing: border-box;
-    background-size: 1em auto;
-  }
-  .urgent-tag {
-    position: absolute;
-    margin: -1.8rem -0.5rem;
-    border: 2px solid;
-    left: 0;
-    background: var(--warning-color);
-  }
-  .done {
-    background-color: var(--primary-color);
-  }
-  .done *:not(input, .urgent-tag) {
-    color: white !important;
-  }
-  .done .toggle-done, .urgent .toggle-urgent {
-    background-image: url("data:image/svg+xml,%3Csvg width='22' height='16' viewBox='0 0 22 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.5 1.5L7.4375 14.5L1.5 8.5909' stroke='%23676778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
   .goal-updates {
     display: inline-block;

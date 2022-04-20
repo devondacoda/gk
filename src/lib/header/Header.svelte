@@ -2,7 +2,7 @@
 </script>
 
 <header>
-  <h1>Goal Keeper </h1>
+  <h1>Goal Keeper</h1>
   <div class="corner">
 
   </div>
