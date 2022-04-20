@@ -116,13 +116,7 @@ import { crossfade } from 'svelte/transition';
 	});
 </script>
 
-<div class="xl:flex justify-center">
-  {#if goal && !isSummary}
-    <div class="px-4 xl:w-1/6 absolute left-0">
-      <Tasks bind:goal on:taskAdded={() => saveGoal(goal)} on:taskToggled={() => saveGoal(goal)} />
-    </div>
-  {/if}
-
+<div class="xl:flex xl:justify-center">
   <div
     in:receive={{ key: (goal || newGoal).id }}
     class="card min-w-min"
@@ -274,6 +268,12 @@ import { crossfade } from 'svelte/transition';
       </div>
     {/if}
   </div>
+
+  {#if goal && !isSummary}
+    <div class="pt-4 xl:pt-0 xl:px-4 xl:w-1/6 xl:absolute xl:left-0">
+      <Tasks bind:goal on:taskAdded={() => saveGoal(goal)} on:taskToggled={() => saveGoal(goal)} />
+    </div>
+  {/if}
 </div>
 
 <style>
