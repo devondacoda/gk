@@ -1,6 +1,7 @@
 <script lang="ts">
 	let inSession = false;
-	let minute = 25;
+  const originalMinuteTime = 25;
+	let minute = originalMinuteTime;
 	let sec = 0;
 
 	function toggleTimer() {
@@ -29,7 +30,7 @@
   function resetTimer() {
     clearInterval(intervalId);
     inSession = false;
-    minute = 5;
+    minute = originalMinuteTime;
     sec = 0;
   }
 </script>
